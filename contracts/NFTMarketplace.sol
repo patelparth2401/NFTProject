@@ -176,6 +176,48 @@ contract NFTMarketplace is ERC721URIStorage {
         payable(seller).transfer(msg.value);
     }
 
+    // Add this function near your other functions
+    /*function updateTokenPrice(uint256 tokenId, uint256 newPrice) public {
+    // Check if token exists
+    require(_exists(tokenId), "ERC721: operator query for nonexistent token");
+    // Check if caller is the seller (original creator)
+    require(idToListedToken[tokenId].seller == msg.sender, "Only the original seller can update the price");
+    // Check if token is currently listed
+    require(idToListedToken[tokenId].currentlyListed, "Token is not currently listed");
+    // Ensure new price is valid
+    require(newPrice > 0, "Price must be greater than 0");
+
+    // Update the price
+    idToListedToken[tokenId].price = newPrice;
+
+    // Emit an event to log the price change
+    emit TokenListedSuccess(
+        tokenId,
+        idToListedToken[tokenId].owner,
+        idToListedToken[tokenId].seller,
+        newPrice,
+        true
+    );
+    }*/
+
+    function updateTokenPrice(uint256 tokenId, uint256 newPrice, string memory newTokenURI) public {
+    require(_exists(tokenId), "ERC721: operator query for nonexistent token");
+    require(idToListedToken[tokenId].seller == msg.sender, "Only the original seller can update the price");
+    require(idToListedToken[tokenId].currentlyListed, "Token is not currently listed");
+    require(newPrice > 0, "Price must be greater than 0");
+
+    idToListedToken[tokenId].price = newPrice;
+    _setTokenURI(tokenId, newTokenURI); // Update the token URI with new metadata
+
+    emit TokenListedSuccess(
+        tokenId,
+        idToListedToken[tokenId].owner,
+        idToListedToken[tokenId].seller,
+        newPrice,
+        true
+    );
+}
+
     //We might add a resell token function in the future
     //In that case, tokens won't be listed by default but users can send a request to actually list a token
     //Currently NFTs are listed by default
