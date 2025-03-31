@@ -7,8 +7,10 @@ import NFTPage from "./components/NFTpage";
 import UpdateNFT from "./components/UpdateNFT";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { testFirestore } from "./testFirebase.js";
 
 function App() {
+  testFirestore();
   return (
     <div className="container">
       <Routes>

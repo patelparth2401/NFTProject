@@ -76,6 +76,8 @@
 import { useState, useEffect } from "react";
 import Marketplace from "../Marketplace.json";
 import { uploadFileToIPFS, uploadJSONToIPFS } from "../pinata";
+import { db } from "../firebase";
+import { doc, setDoc } from "firebase/firestore";
 const ethers = require("ethers");
 
 const contractAddress = "0x57D13bFA30AAd3D106961Bc23B72146A6B31b20C";
@@ -156,6 +158,16 @@ export default function UpdateNFT() {
         newTokenURI
       );
       await transaction.wait();
+
+      // Update Firestore with new price and updatedAt
+      await setDoc(
+        doc(db, "nfts", tokenId.toString()),
+        {
+          price: newPrice,
+          updatedAt: Date.now(),
+        },
+        { merge: true } // Only update specified fields, preserve others
+      );
 
       updateMessage("Price and metadata updated successfully!");
       updateFormParams({ tokenId: "", newPrice: "" });
